@@ -12,6 +12,11 @@ pipeline {
             }
         }
          stage('build image') {
+            when {
+                expression {
+                    BRANCH_NAME == "main"
+                }
+            }
             steps {
                 script {
                     echo "Testing the application..."
@@ -19,6 +24,11 @@ pipeline {
             }
         }
         stage('deploy') {
+            when {
+                expression {
+                    BRANCH_NAME == "main"
+                }
+            }
             steps {
                 script {
                    echo "Deploying app..."
