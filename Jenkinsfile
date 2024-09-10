@@ -1,14 +1,17 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven-3.9'
+    }
     stages {
-        stage('build') {
+        stage('build jar') {
             steps {
                 script {
                     echo "Building app..."
                 }
             }
         }
-         stage('build') {
+         stage('build image') {
             steps {
                 script {
                     echo "Testing the application..."
