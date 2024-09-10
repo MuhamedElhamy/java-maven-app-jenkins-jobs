@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     echo "Building the docker image..."
-                    withCredentials([usernamePassword(credentialsID: 'dockerhub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         sh 'docker build -t mhmdelhamy/java-maven-app:2.0 .'
                         sh 'docker login -u $USER -p $PASS'
                         sh 'docker push mhmdelhamy/java-maven-app:2.0'
