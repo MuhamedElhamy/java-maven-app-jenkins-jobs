@@ -1,26 +1,17 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven-3.9'
-    }
+    agent any}
     stages {
-        stage('build jar') {
+        stage('build') {
             steps {
                 script {
                     echo "Building app..."
-                    sh 'mvn package'
                 }
             }
         }
-         stage('build image') {
+         stage('build') {
             steps {
                 script {
-                    echo "Building the docker image..."
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                        sh 'docker build -t mhmdelhamy/java-maven-app:2.0 .'
-                        sh 'docker login -u $USER -p $PASS'
-                        sh 'docker push mhmdelhamy/java-maven-app:2.0'
-                    }
+                    echo "Testing the application..."
                 }
             }
         }
