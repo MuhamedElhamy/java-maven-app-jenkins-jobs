@@ -1,39 +1,63 @@
+def gv
+
 pipeline {
     agent any
     tools {
         maven 'maven-3.9'
     }
     stages {
-        stage('build jar') {
+        stage('increment version') {
             steps {
                 script {
-                    echo "Building app..."
+                    echo "incrementing app version..."
+                    sh"mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit"
+                    def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+                    env.IMAGE_NAME = "$version-$BUILD_NUMBER"
                 }
             }
         }
-         stage('build image') {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
+        stage("init") {
             steps {
                 script {
-                    echo "Testing the application..."
+                    gv = load "script.groovy"
                 }
             }
         }
-        stage('deploy') {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
+        stage("build jar") {
             steps {
                 script {
-                   echo "Deploying app..."
+                    echo "building jar"
+                    gv.buildJar()
                 }
             }
         }
-    }
+        stage("build image") {
+            steps {
+                script {
+                    echo "building image"
+                    gv.buildImage()
+                }
+            }
+        }
+        stage("deploy") {
+            steps {
+                script {
+                    echo "deploying"
+                    gv.deployApp()
+                }
+            }
+        }
+        stage("version commit") {
+            steps {
+                script {
+                    echo "versioning commit..."
+                    echo "All Work Thank to Allah"
+                    gv.versionUpdate()
+                }
+            }
+        }
+    }   
 }
